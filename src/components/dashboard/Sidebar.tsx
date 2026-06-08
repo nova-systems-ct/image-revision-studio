@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, LineChart, FileBarChart2, Settings, GraduationCap, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Users, LineChart, FileBarChart2, Settings, GraduationCap, ChevronDown, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/students", label: "All Students", icon: Users },
+  { to: "/timesheet", label: "Timesheet", icon: Clock },
   { to: "/tracker", label: "Student Tracker", icon: LineChart },
   { to: "/reports", label: "Reports", icon: FileBarChart2 },
   { to: "/settings", label: "Settings", icon: Settings },
