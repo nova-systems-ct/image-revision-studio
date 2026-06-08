@@ -48,6 +48,7 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-serif: "Fraunces", "Georgia", serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
@@ -55,10 +56,11 @@
   --radius: 0.875rem;
 
   /* Brand */
-  --navy-deep: oklch(0.18 0.05 260);
-  --navy: oklch(0.24 0.06 260);
-  --gold: oklch(0.78 0.14 80);
-  --gold-soft: oklch(0.88 0.09 85);
+  --navy-deep: oklch(0.16 0.05 265);
+  --navy: oklch(0.22 0.06 262);
+  --gold: oklch(0.80 0.14 82);
+  --gold-deep: oklch(0.68 0.16 70);
+  --gold-soft: oklch(0.92 0.07 88);
   --success: oklch(0.68 0.16 155);
 
   /* Light app surface */
@@ -103,20 +105,38 @@
   * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);
+    background-image:
+      radial-gradient(at 12% 0%, oklch(0.94 0.04 85 / 0.55) 0px, transparent 50%),
+      radial-gradient(at 100% 10%, oklch(0.90 0.05 260 / 0.35) 0px, transparent 45%);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   }
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
 }
 
 @layer utilities {
+  .font-serif { font-family: var(--font-serif); font-feature-settings: "ss01"; }
   .bg-sidebar-gradient {
-    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 100%);
+    background:
+      radial-gradient(120% 60% at 50% 0%, oklch(0.30 0.08 265 / 0.7) 0%, transparent 60%),
+      linear-gradient(180deg, var(--navy-deep) 0%, oklch(0.13 0.05 265) 100%);
   }
   .bg-stat-gradient {
-    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+    background:
+      radial-gradient(120% 80% at 100% 0%, oklch(0.32 0.08 262 / 0.9) 0%, transparent 55%),
+      linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+  }
+  .bg-gold-gradient {
+    background: linear-gradient(135deg, var(--gold-soft) 0%, var(--gold) 50%, var(--gold-deep) 100%);
   }
   .text-gold { color: var(--gold); }
+  .text-gold-gradient {
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold), var(--gold-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   .ring-gold { box-shadow: 0 0 0 1px color-mix(in oklch, var(--gold) 35%, transparent); }
+  .shadow-luxe { box-shadow: 0 30px 60px -30px oklch(0.18 0.05 260 / 0.45), 0 8px 24px -16px oklch(0.18 0.05 260 / 0.3); }
 }
