@@ -132,7 +132,7 @@
 @media print {
   @page {
     size: letter portrait;
-    margin: 0.2in;
+    margin: 0.3in;
   }
 
   html, body {
@@ -155,7 +155,6 @@
     box-sizing: border-box !important;
   }
 
-  /* Force timesheet to fill full printable width */
   .ts-page,
   .ts-page * {
     max-width: none !important;
@@ -164,20 +163,18 @@
 
   .ts-page {
     width: 100% !important;
-    font-size: 9.5pt !important;
   }
 
   .ts-table {
     width: 100% !important;
-    font-size: 8.5pt !important;
-  }
-
-  .ts-table th {
-    font-size: 7.5pt !important;
   }
 
   .ts-row {
-    height: 16pt !important;
+    height: 15pt !important;
+  }
+
+  .ts-subtotal {
+    height: 22pt !important;
   }
 
   .ts-print-break { page-break-after: always; break-after: page; }
