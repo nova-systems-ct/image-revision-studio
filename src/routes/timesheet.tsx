@@ -1,23 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Clock, Plus, Download, CheckCircle2, Timer, CalendarDays } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-
-export const Route = createFileRoute("/timesheet")({
-  head: () => ({
-    meta: [
-      { title: "Timesheet — CT State Program Director" },
-      { name: "description", content: "Log staff hours, track attendance, and approve weekly timesheets." },
-    ],
-  }),
-  component: TimesheetPage,
-});
 
 type Row = {
   id: string;
   name: string;
   role: string;
-  hours: number[]; // Mon-Fri
+  hours: number[];
   status: "Approved" | "Pending" | "Draft";
 };
 
@@ -31,7 +20,7 @@ const initial: Row[] = [
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
-function TimesheetPage() {
+export default function TimesheetPage() {
   const [rows, setRows] = useState(initial);
   const [query, setQuery] = useState("");
 

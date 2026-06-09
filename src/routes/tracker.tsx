@@ -1,11 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/components/dashboard/Layout";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { attendanceTrend } from "@/components/dashboard/data";
 
-export const Route = createFileRoute("/tracker")({
-  head: () => ({ meta: [{ title: "Student Tracker — CT State" }, { name: "description", content: "Track progress and attendance trends over time." }] }),
-  component: () => (
+export default function TrackerPage() {
+  return (
     <DashboardLayout title="Student Tracker" subtitle="Longitudinal progress and engagement signals">
       <div className="rounded-2xl border border-border bg-card p-5">
         <h3 className="font-display text-base font-bold">30-Day Attendance</h3>
@@ -22,5 +20,5 @@ export const Route = createFileRoute("/tracker")({
         </div>
       </div>
     </DashboardLayout>
-  ),
-});
+  );
+}

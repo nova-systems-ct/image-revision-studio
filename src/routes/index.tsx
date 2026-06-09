@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Users, CalendarCheck2, TrendingUp, GraduationCap, ArrowUpRight, Clock, AlertCircle, LogOut, CheckCircle2, MoreHorizontal } from "lucide-react";
 import {
@@ -9,17 +8,7 @@ import { DashboardLayout } from "@/components/dashboard/Layout";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { students, activity, programs, attendanceTrend, demographics } from "@/components/dashboard/data";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Dashboard — CT State Program Director" },
-      { name: "description", content: "Live enrollment, attendance, and student check-in operations for CT State Community College." },
-    ],
-  }),
-  component: Dashboard,
-});
-
-function Dashboard() {
+export default function Dashboard() {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {

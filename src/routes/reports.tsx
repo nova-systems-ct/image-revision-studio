@@ -1,10 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/components/dashboard/Layout";
 import { programs } from "@/components/dashboard/data";
 
-export const Route = createFileRoute("/reports")({
-  head: () => ({ meta: [{ title: "Reports — CT State" }, { name: "description", content: "Program participation and outcome reports." }] }),
-  component: () => (
+export default function ReportsPage() {
+  return (
     <DashboardLayout title="Reports" subtitle="Program participation snapshot">
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {programs.map((p) => (
@@ -19,5 +17,5 @@ export const Route = createFileRoute("/reports")({
         ))}
       </div>
     </DashboardLayout>
-  ),
-});
+  );
+}

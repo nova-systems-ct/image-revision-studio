@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, Users, LineChart, FileBarChart2, Settings, GraduationCap, ChevronDown, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ const nav = [
 ];
 
 export function Sidebar() {
-  const path = useRouterState({ select: (s) => s.location.pathname });
+  const { pathname } = useLocation();
 
   return (
     <aside className="bg-sidebar-gradient text-sidebar-foreground relative flex w-64 shrink-0 flex-col border-r border-sidebar-border">
@@ -34,7 +34,7 @@ export function Sidebar() {
         <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/40">Workspace</div>
         <ul className="space-y-1">
           {nav.map((item) => {
-            const active = path === item.to;
+            const active = pathname === item.to;
             const Icon = item.icon;
             return (
               <li key={item.to}>
