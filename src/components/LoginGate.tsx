@@ -3,11 +3,7 @@ import { useState, useEffect, useRef, type FormEvent } from "react";
 const SESSION_KEY = "nvcc-auth";
 const PASSWORD = import.meta.env.VITE_SUPERVISOR_PASSWORD || "WAVE2024";
 
-interface Props {
-  children: React.ReactNode;
-}
-
-export function LoginGate({ children }: Props) {
+export function LoginGate({ children }: { children: React.ReactNode }) {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem(SESSION_KEY) === "1");
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
@@ -15,175 +11,134 @@ export function LoginGate({ children }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!authed) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    if (!authed) setTimeout(() => inputRef.current?.focus(), 80);
   }, [authed]);
 
-  function handleSubmit(e: FormEvent) {
+  function submit(e: FormEvent) {
     e.preventDefault();
     if (input === PASSWORD) {
       sessionStorage.setItem(SESSION_KEY, "1");
       setAuthed(true);
     } else {
-      setError("Incorrect password. Please try again.");
+      setError("Incorrect password.");
       setShake(true);
       setInput("");
-      setTimeout(() => {
-        setShake(false);
-        inputRef.current?.focus();
-      }, 600);
+      setTimeout(() => { setShake(false); inputRef.current?.focus(); }, 600);
     }
   }
 
   if (authed) return <>{children}</>;
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "linear-gradient(135deg, #1B3A6B 0%, #0f2347 100%)",
-        padding: "1rem",
-      }}
-    >
-      {/* CT State Logo */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <svg width="56" height="58" viewBox="0 0 42 44" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2,2 L40,2 L40,28 L21,42 L2,28 Z" fill="white" opacity="0.12" />
-          <path d="M2,2 L40,2 L40,28 L21,42 L2,28 Z" fill="none" stroke="white" strokeWidth="1.5" />
-          <rect x="2" y="17" width="38" height="2.5" fill="white" opacity="0.8" />
-          <text x="21" y="16" textAnchor="middle" fill="white" fontSize="10" fontWeight="900" fontFamily="Arial,sans-serif">CT</text>
-          <text x="21" y="29" textAnchor="middle" fill="#C5A028" fontSize="6.5" fontWeight="700" fontFamily="Arial,sans-serif" letterSpacing="1.5">STATE</text>
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(160deg, #0a0f1e 0%, #1B3A6B 100%)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'Inter', system-ui, sans-serif",
+      WebkitFontSmoothing: "antialiased",
+      padding: "1.5rem",
+    }}>
+
+      {/* Logo */}
+      <div style={{ marginBottom: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+        <svg width="52" height="54" viewBox="0 0 42 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2,2 L40,2 L40,28 L21,42 L2,28 Z" fill="rgba(255,255,255,0.08)" />
+          <path d="M2,2 L40,2 L40,28 L21,42 L2,28 Z" fill="none" stroke="#D4A030" strokeWidth="1.5" />
+          <rect x="2" y="17" width="38" height="2" fill="rgba(255,255,255,0.6)" />
+          <text x="21" y="15.5" textAnchor="middle" fill="white" fontSize="10" fontWeight="900" fontFamily="Arial,sans-serif">CT</text>
+          <text x="21" y="28.5" textAnchor="middle" fill="#D4A030" fontSize="6" fontWeight="700" fontFamily="Arial,sans-serif" letterSpacing="2">STATE</text>
         </svg>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ color: "white", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em", fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif" }}>
+            WAVE Program Portal
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.8rem", marginTop: "0.25rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            CT State Naugatuck Valley
+          </div>
+        </div>
       </div>
 
-      <div
-        style={{
-          background: "white",
-          borderRadius: "16px",
-          padding: "2.5rem 2rem",
-          width: "100%",
-          maxWidth: "380px",
-          boxShadow: "0 25px 60px rgba(0,0,0,0.35)",
-        }}
-      >
-        <h1
+      {/* Gold rule */}
+      <div style={{ width: "40px", height: "2px", background: "#D4A030", borderRadius: "2px", marginBottom: "2rem" }} />
+
+      {/* Form */}
+      <form onSubmit={submit} style={{ width: "100%", maxWidth: "320px" }}>
+        <label style={{
+          display: "block",
+          fontSize: "0.7rem",
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          color: "rgba(255,255,255,0.5)",
+          marginBottom: "0.5rem",
+        }}>
+          Supervisor Password
+        </label>
+        <input
+          id="pwd"
+          ref={inputRef}
+          type="password"
+          value={input}
+          onChange={(e) => { setInput(e.target.value); setError(""); }}
+          placeholder="Enter password"
+          autoComplete="current-password"
           style={{
-            color: "#1B3A6B",
-            fontSize: "1.35rem",
+            width: "100%",
+            padding: "0.75rem 1rem",
+            borderRadius: "8px",
+            border: error ? "1.5px solid #ef4444" : "1.5px solid rgba(255,255,255,0.12)",
+            background: "rgba(255,255,255,0.06)",
+            color: "white",
+            fontSize: "0.95rem",
+            outline: "none",
+            boxSizing: "border-box",
+            animation: shake ? "shake 0.5s cubic-bezier(.36,.07,.19,.97)" : "none",
+            transition: "border-color 0.15s, box-shadow 0.15s",
+          }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#D4A030"; (e.target as HTMLInputElement).style.boxShadow = "0 0 0 3px rgba(212,160,48,0.15)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = error ? "#ef4444" : "rgba(255,255,255,0.12)"; (e.target as HTMLInputElement).style.boxShadow = "none"; }}
+        />
+        {error && (
+          <p style={{ color: "#fca5a5", fontSize: "0.78rem", marginTop: "0.4rem" }}>{error}</p>
+        )}
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: "0.75rem",
+            marginTop: "1rem",
+            borderRadius: "8px",
+            background: "#D4A030",
+            color: "#0a0f1e",
             fontWeight: 800,
-            letterSpacing: "-0.02em",
-            marginBottom: "0.25rem",
-            fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+            fontSize: "0.9rem",
+            border: "none",
+            cursor: "pointer",
+            letterSpacing: "0.04em",
+            fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
+            transition: "opacity 0.15s",
           }}
+          onMouseOver={(e) => ((e.target as HTMLButtonElement).style.opacity = "0.88")}
+          onMouseOut={(e) => ((e.target as HTMLButtonElement).style.opacity = "1")}
         >
-          WAVE Program Portal
-        </h1>
-        <p
-          style={{
-            color: "#6b7280",
-            fontSize: "0.85rem",
-            marginBottom: "1.75rem",
-          }}
-        >
-          CT State Naugatuck Valley · WIOA Out Of School
-        </p>
+          Sign In
+        </button>
+      </form>
 
-        <form onSubmit={handleSubmit}>
-          <label
-            htmlFor="pwd"
-            style={{
-              display: "block",
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.07em",
-              color: "#374151",
-              marginBottom: "0.4rem",
-            }}
-          >
-            Supervisor Password
-          </label>
-          <input
-            id="pwd"
-            ref={inputRef}
-            type="password"
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              setError("");
-            }}
-            placeholder="Enter password"
-            autoComplete="current-password"
-            style={{
-              width: "100%",
-              padding: "0.65rem 0.875rem",
-              borderRadius: "8px",
-              border: error ? "2px solid #dc2626" : "1.5px solid #d1d5db",
-              fontSize: "0.95rem",
-              outline: "none",
-              marginBottom: "0.5rem",
-              boxSizing: "border-box",
-              animation: shake ? "shake 0.5s cubic-bezier(.36,.07,.19,.97)" : "none",
-              transition: "border-color 0.15s",
-            }}
-          />
-          {error && (
-            <p
-              style={{
-                color: "#dc2626",
-                fontSize: "0.78rem",
-                marginBottom: "0.75rem",
-                marginTop: "-0.1rem",
-              }}
-            >
-              {error}
-            </p>
-          )}
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              padding: "0.7rem",
-              borderRadius: "8px",
-              background: "#1B3A6B",
-              color: "white",
-              fontWeight: 700,
-              fontSize: "0.9rem",
-              border: "none",
-              cursor: "pointer",
-              marginTop: error ? "0" : "0.5rem",
-              letterSpacing: "0.03em",
-              transition: "background 0.15s",
-            }}
-            onMouseOver={(e) => ((e.target as HTMLButtonElement).style.background = "#2a5298")}
-            onMouseOut={(e) => ((e.target as HTMLButtonElement).style.background = "#1B3A6B")}
-          >
-            Sign In
-          </button>
-        </form>
-      </div>
-
-      <p
-        style={{
-          color: "rgba(255,255,255,0.35)",
-          fontSize: "0.72rem",
-          marginTop: "1.5rem",
-        }}
-      >
-        Naugatuck Valley Community College · CT State
+      <p style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.68rem", marginTop: "2.5rem", letterSpacing: "0.04em" }}>
+        WIOA Out Of School · HB 3500 · FY 2027
       </p>
 
       <style>{`
         @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          10%, 50%, 90% { transform: translateX(-6px); }
-          30%, 70% { transform: translateX(6px); }
+          0%,100%{transform:translateX(0)}
+          10%,50%,90%{transform:translateX(-5px)}
+          30%,70%{transform:translateX(5px)}
         }
+        input::placeholder { color: rgba(255,255,255,0.25); }
       `}</style>
     </div>
   );

@@ -1,162 +1,218 @@
-import { useMemo, useState } from "react";
-import { Clock, Plus, Download, CheckCircle2, Timer, CalendarDays } from "lucide-react";
+import { useState } from "react";
+import { CalendarDays, User, Users, Printer, ChevronLeft } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
+import { Timesheet } from "@/components/Timesheet";
+import { getStudents, type Student } from "@/lib/students";
+import { PAY_PERIODS, findCurrentPayPeriod, type PayPeriod } from "@/data/payPeriods";
 
-type Row = {
-  id: string;
-  name: string;
-  role: string;
-  hours: number[];
-  status: "Approved" | "Pending" | "Draft";
-};
+type Mode = "idle" | "period" | "student" | "all";
 
-const initial: Row[] = [
-  { id: "1", name: "John Doe",        role: "Program Director", hours: [8, 8, 7.5, 8, 6],   status: "Approved" },
-  { id: "2", name: "Lena Whitfield",  role: "Academic Advisor", hours: [7, 8, 8, 7.5, 8],   status: "Pending"  },
-  { id: "3", name: "Marcus Bell",     role: "Career Coach",     hours: [6, 8, 8, 8, 7],     status: "Pending"  },
-  { id: "4", name: "Priya Natarajan", role: "Support Lead",     hours: [8, 8, 8, 8, 8],     status: "Approved" },
-  { id: "5", name: "Daniel Chen",     role: "Mentor",           hours: [4, 5, 5, 4, 0],     status: "Draft"    },
-];
-
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+interface Sheet { student: Student; period: PayPeriod }
 
 export default function TimesheetPage() {
-  const [rows, setRows] = useState(initial);
-  const [query, setQuery] = useState("");
+  const students = getStudents();
+  const currentPP = findCurrentPayPeriod() ?? PAY_PERIODS[0]!;
 
-  const filtered = useMemo(
-    () => rows.filter((r) => (r.name + r.role).toLowerCase().includes(query.toLowerCase())),
-    [rows, query]
-  );
+  const [mode, setMode] = useState<Mode>("idle");
+  const [periodId, setPeriodId] = useState<number>(currentPP.id);
+  const [studentIdx, setStudentIdx] = useState<number>(0);
+  const [printSheets, setPrintSheets] = useState<Sheet[]>([]);
 
-  const totalHours = rows.reduce((a, r) => a + r.hours.reduce((b, h) => b + h, 0), 0);
-  const approved = rows.filter((r) => r.status === "Approved").length;
-  const pending = rows.filter((r) => r.status === "Pending").length;
+  const selectedPeriod = PAY_PERIODS.find(p => p.id === periodId) ?? PAY_PERIODS[0]!;
 
-  const update = (id: string, day: number, val: string) => {
-    const n = Math.max(0, Math.min(24, Number(val) || 0));
-    setRows((rs) => rs.map((r) => (r.id === id ? { ...r, hours: r.hours.map((h, i) => (i === day ? n : h)) } : r)));
-  };
-
-  const setStatus = (id: string, status: Row["status"]) =>
-    setRows((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
+  function generate() {
+    if (students.length === 0) return;
+    let sheets: Sheet[];
+    if (mode === "student") {
+      const s = students[studentIdx];
+      sheets = s ? [{ student: s, period: selectedPeriod }] : [];
+    } else {
+      sheets = students.map(s => ({ student: s, period: selectedPeriod }));
+    }
+    setPrintSheets(sheets);
+    requestAnimationFrame(() => window.print());
+  }
 
   return (
-    <DashboardLayout title="Timesheet" subtitle="Week of June 2 – June 6, 2026" query={query} onQueryChange={setQuery}>
-      {/* Luxury hero strip */}
-      <section className="relative mb-6 overflow-hidden rounded-3xl border border-border bg-stat-gradient p-6 text-white">
-        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
-        <div className="absolute -left-10 -bottom-20 h-56 w-56 rounded-full bg-[oklch(0.62_0.10_250)]/20 blur-3xl" />
-        <div className="relative grid gap-6 md:grid-cols-4">
-          <Metric icon={Clock} label="Total Hours" value={`${totalHours.toFixed(1)}h`} />
-          <Metric icon={CheckCircle2} label="Approved" value={`${approved}`} />
-          <Metric icon={Timer} label="Pending Review" value={`${pending}`} />
-          <Metric icon={CalendarDays} label="Pay Period" value="Bi-weekly" />
-        </div>
-      </section>
+    <DashboardLayout title="Timesheet" subtitle="Generate official CT State pay period timesheets">
 
-      {/* Actions */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">Weekly Entries</h2>
-          <p className="text-sm text-muted-foreground">Tap a cell to edit. Submit for director approval when ready.</p>
-        </div>
-        <div className="flex gap-2">
-          <button className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold hover:bg-muted">
-            <Download className="h-4 w-4" /> Export CSV
-          </button>
-          <button className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-gold to-[oklch(0.72_0.16_70)] px-4 py-2 text-sm font-semibold text-primary shadow-[0_8px_24px_-12px_oklch(0.78_0.14_80_/_0.6)]">
-            <Plus className="h-4 w-4" /> Add Entry
-          </button>
-        </div>
+      {/* Print portal — hidden on screen, printed */}
+      <div className="print-portal">
+        {printSheets.map((sheet, i) => (
+          <div key={i} className={i < printSheets.length - 1 ? "ts-print-break" : ""}>
+            <Timesheet student={sheet.student} period={sheet.period} />
+          </div>
+        ))}
       </div>
 
-      {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr className="text-left text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                <th className="py-4 pl-6 font-semibold">Staff</th>
-                {days.map((d) => (
-                  <th key={d} className="py-4 text-center font-semibold">{d}</th>
-                ))}
-                <th className="py-4 text-center font-semibold">Total</th>
-                <th className="py-4 pr-6 font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/70">
-              {filtered.map((r) => {
-                const total = r.hours.reduce((a, b) => a + b, 0);
-                return (
-                  <tr key={r.id} className="group hover:bg-muted/30">
-                    <td className="py-3 pl-6">
-                      <div className="flex items-center gap-3">
-                        <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-primary to-[oklch(0.32_0.07_260)] text-[11px] font-bold text-gold ring-1 ring-gold/30">
-                          {r.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
-                        </div>
-                        <div>
-                          <div className="font-semibold">{r.name}</div>
-                          <div className="text-[11px] text-muted-foreground">{r.role}</div>
-                        </div>
-                      </div>
-                    </td>
-                    {r.hours.map((h, i) => (
-                      <td key={i} className="px-2 py-3 text-center">
-                        <input
-                          type="number"
-                          min={0}
-                          max={24}
-                          step={0.5}
-                          value={h}
-                          onChange={(e) => update(r.id, i, e.target.value)}
-                          className="h-10 w-16 rounded-lg border border-border bg-background text-center font-medium tabular-nums focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                        />
-                      </td>
+      <div className="no-print">
+        {mode === "idle" ? (
+          /* ── Action buttons ── */
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground mb-6">
+              Choose how to generate timesheets. All timesheets use the official CT State WAVE form
+              with HB 3500 / WIOA Out Of School grant info pre-filled.
+            </p>
+
+            {students.length === 0 && (
+              <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                No students enrolled yet. Add students on the <strong>Students</strong> tab first.
+              </div>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <ActionCard
+                icon={CalendarDays}
+                title="Generate by Pay Period"
+                description="Print timesheets for all students in a selected pay period."
+                onClick={() => setMode("period")}
+                disabled={students.length === 0}
+              />
+              <ActionCard
+                icon={User}
+                title="Generate for Student"
+                description="Print a single student's timesheet for a selected pay period."
+                onClick={() => setMode("student")}
+                disabled={students.length === 0}
+              />
+              <ActionCard
+                icon={Users}
+                title="Generate All"
+                description="Print all students for the current pay period in one batch."
+                onClick={() => setMode("all")}
+                disabled={students.length === 0}
+              />
+            </div>
+
+            {/* Recent pay periods reference */}
+            <div className="mt-8 rounded-xl border border-border bg-card p-5">
+              <h3 className="font-display text-sm font-bold text-foreground mb-3">FY 2027 Pay Period Schedule</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+                      <th className="pb-2 pr-6 font-semibold">PP</th>
+                      <th className="pb-2 pr-6 font-semibold">Period</th>
+                      <th className="pb-2 font-semibold">Payday</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60">
+                    {PAY_PERIODS.slice(0, 6).map(pp => {
+                      const isCurrent = pp.id === currentPP.id;
+                      return (
+                        <tr key={pp.id} className={isCurrent ? "bg-accent/40" : "hover:bg-muted/30"}>
+                          <td className="py-2 pr-6 font-semibold tabular-nums text-foreground">
+                            {isCurrent && <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-gold" />}
+                            PP {pp.id}
+                          </td>
+                          <td className="py-2 pr-6 text-muted-foreground tabular-nums">{pp.label.split(":")[1]?.split("—")[0]?.trim()}</td>
+                          <td className="py-2 text-muted-foreground tabular-nums">{pp.label.split("Payday ")[1]}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <p className="mt-2 text-xs text-muted-foreground">Showing first 6 of 26 pay periods</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* ── Configuration panel ── */
+          <div className="max-w-lg">
+            <button
+              onClick={() => setMode("idle")}
+              className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </button>
+
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h2 className="font-display text-base font-bold text-foreground mb-1">
+                {mode === "period" && "Generate by Pay Period"}
+                {mode === "student" && "Generate for Student"}
+                {mode === "all" && "Generate All Students"}
+              </h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                {mode === "period" && `Print timesheets for all ${students.length} student${students.length !== 1 ? "s" : ""}.`}
+                {mode === "student" && "Select a student and pay period."}
+                {mode === "all" && `Print all ${students.length} student${students.length !== 1 ? "s" : ""} for the selected period.`}
+              </p>
+
+              <div className="space-y-4">
+                {/* Student picker — only for 'student' mode */}
+                {mode === "student" && (
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Student</label>
+                    <select
+                      value={studentIdx}
+                      onChange={e => setStudentIdx(Number(e.target.value))}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:border-gold/60 focus:outline-none focus:ring-2 focus:ring-gold/20"
+                    >
+                      {students.map((s, i) => (
+                        <option key={i} value={i}>{s.name} — {s.department}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Pay period picker */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pay Period</label>
+                  <select
+                    value={periodId}
+                    onChange={e => setPeriodId(Number(e.target.value))}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:border-gold/60 focus:outline-none focus:ring-2 focus:ring-gold/20"
+                  >
+                    {PAY_PERIODS.map(pp => (
+                      <option key={pp.id} value={pp.id}>{pp.label}</option>
                     ))}
-                    <td className="py-3 text-center">
-                      <span className="inline-flex items-center rounded-lg bg-accent px-3 py-1.5 font-display text-sm font-bold tabular-nums text-gold">
-                        {total.toFixed(1)}h
-                      </span>
-                    </td>
-                    <td className="py-3 pr-6">
-                      <select
-                        value={r.status}
-                        onChange={(e) => setStatus(r.id, e.target.value as Row["status"])}
-                        className={`rounded-full border-0 px-3 py-1.5 text-[11px] font-semibold focus:outline-none focus:ring-2 focus:ring-gold/40 ${
-                          r.status === "Approved"
-                            ? "bg-[oklch(0.95_0.06_155)] text-success"
-                            : r.status === "Pending"
-                            ? "bg-accent text-gold"
-                            : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        <option>Approved</option>
-                        <option>Pending</option>
-                        <option>Draft</option>
-                      </select>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  </select>
+                </div>
+
+                {/* Summary */}
+                <div className="rounded-lg bg-muted/60 px-4 py-3 text-sm text-muted-foreground">
+                  Will generate <strong className="text-foreground">
+                    {mode === "student" ? 1 : students.length} timesheet{(mode !== "student" && students.length !== 1) ? "s" : ""}
+                  </strong> for <strong className="text-foreground">{selectedPeriod.label.split(":")[1]?.split("—")[0]?.trim()}</strong>
+                </div>
+
+                <button
+                  onClick={generate}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                >
+                  <Printer className="h-4 w-4" />
+                  Generate &amp; Print
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
 }
 
-function Metric({ icon: Icon, label, value }: { icon: typeof Clock; label: string; value: string }) {
+function ActionCard({
+  icon: Icon, title, description, onClick, disabled,
+}: {
+  icon: typeof CalendarDays;
+  title: string;
+  description: string;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="grid h-12 w-12 place-items-center rounded-xl bg-white/5 ring-1 ring-gold/30">
-        <Icon className="h-5 w-5 text-gold" />
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="rounded-xl border border-border bg-card p-5 text-left hover:border-gold/40 hover:bg-accent/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed group"
+    >
+      <div className="mb-3 grid h-10 w-10 place-items-center rounded-lg bg-muted group-hover:bg-gold/10 transition-colors">
+        <Icon className="h-5 w-5 text-muted-foreground group-hover:text-gold transition-colors" />
       </div>
-      <div>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60">{label}</div>
-        <div className="mt-0.5 font-display text-2xl font-bold">{value}</div>
-      </div>
-    </div>
+      <div className="font-display text-sm font-bold text-foreground">{title}</div>
+      <div className="mt-1 text-xs text-muted-foreground leading-relaxed">{description}</div>
+    </button>
   );
 }
