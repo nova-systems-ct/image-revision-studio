@@ -126,35 +126,33 @@
 }
 
 /* ─── Print portal: hidden on screen ─────────────────────── */
-.print-portal { display: none; }
+#print-portal { display: none; }
 
 /* ─── Print: show ONLY the timesheet ─────────────────────── */
 @media print {
   @page {
     size: letter portrait;
-    margin: 0.5in;
+    margin: 0.25in;
   }
 
-  /* Hide every element in the document */
-  body * {
-    visibility: hidden !important;
+  /* Reset html/body */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
   }
 
-  /* Reveal only the print portal and everything inside it */
-  .print-portal,
-  .print-portal * {
-    visibility: visible !important;
+  /* Hide the entire React app */
+  body > #root {
+    display: none !important;
   }
 
-  /* Position the portal at the origin so the page content starts at top-left */
-  .print-portal {
+  /* Show the print portal — it is a direct child of body via createPortal */
+  body > #print-portal {
     display: block !important;
-    position: fixed !important;
-    inset: 0 !important;
     width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-    z-index: 9999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .ts-print-break { page-break-after: always; break-after: page; }

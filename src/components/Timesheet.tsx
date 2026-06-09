@@ -3,7 +3,6 @@ import type { PayPeriod } from "../data/payPeriods";
 import { getPayPeriodDays, formatRangeFull } from "../data/payPeriods";
 
 const NAVY = "#1B3A6B";
-const PINK = "#FFE4EA";
 const BLUE_TINT = "#d0dff0";
 
 interface Props {
@@ -211,36 +210,6 @@ export function Timesheet({ student, period }: Props) {
           <SigRow title="Supervisor" />
           <SigRow title="Educational Assistant" />
           <SigRow title="WAVE Coordinator" showTotalHours />
-        </div>
-
-        {/* ── FOR PAYROLL OFFICE ONLY ── */}
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <div style={{ border: `2px solid ${NAVY}`, minWidth: "220px" }}>
-            <div style={{
-              backgroundColor: NAVY,
-              WebkitPrintColorAdjust: "exact",
-              printColorAdjust: "exact",
-              color: "white",
-              fontSize: "6pt",
-              fontWeight: "900",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              textAlign: "center",
-              padding: "2px 6px",
-            }}>
-              For Payroll Office Only
-            </div>
-            <div style={{ display: "flex", gap: "8px", padding: "3px 6px 4px" }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ borderBottom: "1px solid #000", marginBottom: "1px" }}>&nbsp;</div>
-                <div style={{ fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", color: "#777" }}>Date Received</div>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ borderBottom: "1px solid #000", marginBottom: "1px" }}>&nbsp;</div>
-                <div style={{ fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", color: "#777" }}>Processed By</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* ── Footer ── */}

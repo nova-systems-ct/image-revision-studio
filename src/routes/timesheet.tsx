@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { CalendarDays, User, Users, Printer, ChevronLeft } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
 import { Timesheet } from "@/components/Timesheet";
@@ -34,18 +35,19 @@ export default function TimesheetPage() {
   }
 
   return (
-    <DashboardLayout title="Timesheet" subtitle="Generate official CT State pay period timesheets">
+    <>
+      {createPortal(
+        <div id="print-portal">
+          {printSheets.map((sheet, i) => (
+            <div key={i} className={i < printSheets.length - 1 ? "ts-print-break" : ""}>
+              <Timesheet student={sheet.student} period={sheet.period} />
+            </div>
+          ))}
+        </div>,
+        document.body
+      )}
 
-      {/* Print portal — hidden on screen, printed */}
-      <div className="print-portal">
-        {printSheets.map((sheet, i) => (
-          <div key={i} className={i < printSheets.length - 1 ? "ts-print-break" : ""}>
-            <Timesheet student={sheet.student} period={sheet.period} />
-          </div>
-        ))}
-      </div>
-
-      <div className="no-print">
+      <DashboardLayout title="Timesheet" subtitle="Generate official CT State pay period timesheets">
         {mode === "idle" ? (
           /* ── Action buttons ── */
           <div className="space-y-4">
@@ -188,8 +190,8 @@ export default function TimesheetPage() {
             </div>
           </div>
         )}
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
+    </>
   );
 }
 
