@@ -44,12 +44,12 @@ const cellTxt: React.CSSProperties = {
 function SigLine({ label }: { label: string }) {
   const writeLine: React.CSSProperties = {
     borderBottom: "1px solid #000",
-    minHeight: "22px",
+    minHeight: "24px",
     flex: 1,
   };
   const dateLine: React.CSSProperties = {
     borderBottom: "1px solid #000",
-    minHeight: "22px",
+    minHeight: "24px",
     width: "80px",
   };
   return (

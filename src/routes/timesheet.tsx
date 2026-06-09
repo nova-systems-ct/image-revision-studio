@@ -60,7 +60,7 @@ export default function TimesheetPage() {
     <>
       {/* Print portal — populated only when printing */}
       {createPortal(
-        <div id="print-portal">
+        <div id="print-portal" className="print-portal">
           {printSheets.map((sheet, i) => (
             <div key={i} className={i < printSheets.length - 1 ? "ts-print-break" : ""}>
               <Timesheet student={sheet.student} period={sheet.period} entries={sheet.entries} />

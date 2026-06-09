@@ -126,57 +126,18 @@
 }
 
 /* ─── Print portal: hidden on screen ─────────────────────── */
-#print-portal { display: none; }
+.print-portal { display: none; }
 
 /* ─── Print: show ONLY the timesheet ─────────────────────── */
 @media print {
-  @page {
-    size: letter portrait;
-    margin: 0.3in;
-  }
-
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    width: 100% !important;
-  }
-
-  body > #root {
-    display: none !important;
-  }
-
-  body > #print-portal {
-    display: block !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  .ts-page,
-  .ts-page * {
-    max-width: none !important;
-    box-sizing: border-box !important;
-  }
-
-  .ts-page {
-    width: 100% !important;
-  }
-
-  .ts-table {
-    width: 100% !important;
-  }
-
-  .ts-row {
-    height: 15pt !important;
-  }
-
-  .ts-subtotal {
-    height: 22pt !important;
-  }
-
+  html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+  @page { size: letter portrait; margin: 0.25in; }
+  #root, .app-shell, .sidebar, .topbar { display: none !important; }
+  .print-portal { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
+  .ts-page { width: 100% !important; max-width: none !important; min-height: 100%; padding: 0 !important; }
+  .ts-table { width: 100% !important; }
+  .ts-row { height: 15pt !important; }
+  .ts-subtotal { height: 22pt !important; }
   .ts-print-break { page-break-after: always; break-after: page; }
   .ts-print-break:last-child { page-break-after: auto; break-after: auto; }
 }
