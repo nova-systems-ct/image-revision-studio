@@ -55,7 +55,6 @@
 :root {
   --radius: 0.75rem;
 
-  /* Brand — #1B3A6B navy, #D4A030 gold */
   --navy-deep: #0a0f1e;
   --navy: #1B3A6B;
   --gold: #D4A030;
@@ -63,7 +62,6 @@
   --gold-soft: oklch(0.95 0.05 82);
   --success: oklch(0.68 0.16 155);
 
-  /* Light app surface */
   --background: #f8f8fa;
   --foreground: #0f172a;
   --card: #ffffff;
@@ -90,7 +88,6 @@
   --chart-4: oklch(0.68 0.16 155);
   --chart-5: oklch(0.55 0.18 25);
 
-  /* Dark sidebar */
   --sidebar: #111827;
   --sidebar-foreground: oklch(0.88 0.02 90);
   --sidebar-primary: #D4A030;
@@ -115,15 +112,9 @@
 
 @layer utilities {
   .font-serif { font-family: var(--font-serif); font-feature-settings: "ss01"; }
-  .bg-sidebar-gradient {
-    background: linear-gradient(180deg, #111827 0%, #0a0f1e 100%);
-  }
-  .bg-stat-gradient {
-    background: linear-gradient(135deg, #1B3A6B 0%, #0a0f1e 100%);
-  }
-  .bg-gold-gradient {
-    background: linear-gradient(135deg, #f0c84a 0%, #D4A030 50%, #b8881e 100%);
-  }
+  .bg-sidebar-gradient { background: linear-gradient(180deg, #111827 0%, #0a0f1e 100%); }
+  .bg-stat-gradient    { background: linear-gradient(135deg, #1B3A6B 0%, #0a0f1e 100%); }
+  .bg-gold-gradient    { background: linear-gradient(135deg, #f0c84a 0%, #D4A030 50%, #b8881e 100%); }
   .text-gold { color: var(--gold); }
   .text-gold-gradient {
     background: linear-gradient(120deg, #f0c84a, #D4A030, #b8881e);
@@ -134,33 +125,73 @@
   .shadow-luxe { box-shadow: 0 20px 40px -20px rgba(10,15,30,0.5), 0 4px 12px -8px rgba(10,15,30,0.3); }
 }
 
-/* ── Print — hidden on screen, shown when printing ── */
+/* ─── Print portal: hidden on screen ─────────────────────── */
 .print-portal { display: none; }
 
+/* ─── Print: show ONLY the timesheet ─────────────────────── */
 @media print {
-  @page { size: letter portrait; margin: 0.18in 0.28in; }
-  html, body { margin: 0 !important; padding: 0 !important; background: white !important; }
-  .no-print { display: none !important; }
-  .print-portal { display: block !important; }
+  @page {
+    size: letter portrait;
+    margin: 0.5in;
+  }
+
+  /* Hide every element in the document */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Reveal only the print portal and everything inside it */
+  .print-portal,
+  .print-portal * {
+    visibility: visible !important;
+  }
+
+  /* Position the portal at the origin so the page content starts at top-left */
+  .print-portal {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    z-index: 9999 !important;
+  }
+
   .ts-print-break { page-break-after: always; break-after: page; }
   .ts-print-break:last-child { page-break-after: auto; break-after: auto; }
 }
 
-/* ── Timesheet styles ── */
+/* ─── Timesheet component styles ─────────────────────────── */
 .ts-page {
   background-color: #FFE4EA;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+  color-adjust: exact;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 9pt;
+  font-size: 8.5pt;
   color: #000;
   box-sizing: border-box;
   width: 100%;
-  padding: 0.18in;
+  padding: 0;
 }
-.ts-content { position: relative; }
-.ts-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
-.ts-table th, .ts-table td { border: 1px solid #000; padding: 1.5px 3px; vertical-align: middle; }
+
+.ts-content {
+  position: relative;
+}
+
+.ts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+}
+
+.ts-table th,
+.ts-table td {
+  border: 1px solid #000;
+  padding: 1px 3px;
+  vertical-align: middle;
+}
+
 .ts-table th {
   background-color: #1B3A6B;
   -webkit-print-color-adjust: exact;
@@ -168,15 +199,22 @@
   color: white;
   font-weight: bold;
   text-align: center;
-  font-size: 7pt;
-  letter-spacing: 0.04em;
+  font-size: 6.5pt;
+  letter-spacing: 0.03em;
 }
+
 .ts-subtotal td {
-  background-color: #e0e8f4 !important;
+  background-color: #d0dff0 !important;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-  font-size: 7.5pt;
+  font-size: 7pt;
   font-weight: bold;
 }
-.ts-week2 { background-color: rgba(0,0,48,0.015); }
-.ts-row { height: 15pt; }
+
+.ts-week2 {
+  background-color: rgba(0, 0, 48, 0.02);
+}
+
+.ts-row {
+  height: 14pt;
+}
