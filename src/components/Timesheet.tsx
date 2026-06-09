@@ -1,3 +1,4 @@
+import ctstateLogo from "../assets/ctstate-logo.png";
 import type { Student } from "../lib/students";
 import type { PayPeriod } from "../data/payPeriods";
 import { getPayPeriodDays, formatRangeFull } from "../data/payPeriods";
@@ -21,25 +22,14 @@ function Val({ v }: { v: string }) {
   return v ? <div style={val}>{v}</div> : <div style={blankLine}>&nbsp;</div>;
 }
 
-function CTStateLogo() {
-  return (
-    <svg width="38" height="40" viewBox="0 0 42 44" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2,2 L40,2 L40,28 L21,42 L2,28 Z" fill={NAVY} />
-      <rect x="2" y="17" width="38" height="2.5" fill="white" />
-      <text x="21" y="15.5" textAnchor="middle" fill="white" fontSize="10" fontWeight="900" fontFamily="Arial,sans-serif">CT</text>
-      <text x="21" y="28.5" textAnchor="middle" fill="#C5A028" fontSize="6" fontWeight="700" fontFamily="Arial,sans-serif" letterSpacing="1.5">STATE</text>
-    </svg>
-  );
-}
-
-/* ── Single signature row: Title | Name line | Sig line | Date line ── */
+/* ── Single signature row ── */
 function SigRow({ title, showTotalHours }: { title: string; showTotalHours?: boolean }) {
   const lineStyle: React.CSSProperties = { borderBottom: "1px solid #000", flex: 1 };
   const lineLbl: React.CSSProperties = { fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", color: "#777", marginTop: "1px", whiteSpace: "nowrap" };
   const fieldWrap: React.CSSProperties = { display: "flex", flexDirection: "column", flex: 1, minWidth: 0 };
 
   return (
-    <div style={{ borderTop: "1px solid #bbb", padding: "3px 5px 3px 5px" }}>
+    <div style={{ borderTop: "1px solid #bbb", padding: "3px 5px" }}>
       <div style={{ fontSize: "6pt", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.08em", color: NAVY, marginBottom: "3px" }}>
         {title}
       </div>
@@ -75,8 +65,12 @@ export function Timesheet({ student, period }: Props) {
       <div className="ts-content">
 
         {/* ── Header ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: "7px", borderBottom: `3px solid ${NAVY}`, paddingBottom: "4px", marginBottom: "3px" }}>
-          <CTStateLogo />
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: `3px solid ${NAVY}`, paddingBottom: "4px", marginBottom: "3px" }}>
+          <img
+            src={ctstateLogo}
+            alt="CT State Community College"
+            style={{ height: "34px", width: "auto", flexShrink: 0 }}
+          />
           <div style={{ flex: 1, textAlign: "center" }}>
             <div style={{ fontSize: "10pt", fontWeight: "900", letterSpacing: "0.03em", color: NAVY, lineHeight: 1.2 }}>
               NAUGATUCK VALLEY COMMUNITY COLLEGE
@@ -85,7 +79,7 @@ export function Timesheet({ student, period }: Props) {
               FOR EMPLOYEES PAID WITH FUNDS FROM FEDERAL GRANTS
             </div>
           </div>
-          <div style={{ textAlign: "right", fontSize: "7pt", minWidth: "56px", lineHeight: 1.4 }}>
+          <div style={{ textAlign: "right", fontSize: "7pt", minWidth: "56px", lineHeight: 1.4, flexShrink: 0 }}>
             <div style={{ fontWeight: "bold", fontSize: "8.5pt", color: NAVY }}>FY 2027</div>
             <div style={{ color: "#444" }}>PP {period.id} / 26</div>
           </div>
@@ -210,6 +204,36 @@ export function Timesheet({ student, period }: Props) {
           <SigRow title="Supervisor" />
           <SigRow title="Educational Assistant" />
           <SigRow title="WAVE Coordinator" showTotalHours />
+        </div>
+
+        {/* ── FOR PAYROLL OFFICE ONLY ── */}
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ border: `2px solid ${NAVY}`, minWidth: "220px" }}>
+            <div style={{
+              backgroundColor: NAVY,
+              WebkitPrintColorAdjust: "exact",
+              printColorAdjust: "exact",
+              color: "white",
+              fontSize: "6pt",
+              fontWeight: "900",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              textAlign: "center",
+              padding: "2px 6px",
+            }}>
+              For Payroll Office Only
+            </div>
+            <div style={{ display: "flex", gap: "8px", padding: "3px 6px 4px" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ borderBottom: "1px solid #000", marginBottom: "1px" }}>&nbsp;</div>
+                <div style={{ fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", color: "#777" }}>Date Received</div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ borderBottom: "1px solid #000", marginBottom: "1px" }}>&nbsp;</div>
+                <div style={{ fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", color: "#777" }}>Processed By</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ── Footer ── */}
