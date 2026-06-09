@@ -132,27 +132,52 @@
 @media print {
   @page {
     size: letter portrait;
-    margin: 0.25in;
+    margin: 0.2in;
   }
 
-  /* Reset html/body */
   html, body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
+    width: 100% !important;
   }
 
-  /* Hide the entire React app */
   body > #root {
     display: none !important;
   }
 
-  /* Show the print portal — it is a direct child of body via createPortal */
   body > #print-portal {
     display: block !important;
     width: 100% !important;
+    max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Force timesheet to fill full printable width */
+  .ts-page,
+  .ts-page * {
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .ts-page {
+    width: 100% !important;
+    font-size: 9.5pt !important;
+  }
+
+  .ts-table {
+    width: 100% !important;
+    font-size: 8.5pt !important;
+  }
+
+  .ts-table th {
+    font-size: 7.5pt !important;
+  }
+
+  .ts-row {
+    height: 16pt !important;
   }
 
   .ts-print-break { page-break-after: always; break-after: page; }
