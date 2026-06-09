@@ -1,38 +1,43 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, LineChart, FileBarChart2, Settings, GraduationCap, Clock } from "lucide-react";
+import { LayoutDashboard, Users, FileBarChart2, Settings, GraduationCap, Clock, LineChart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/students", label: "Students", icon: Users },
-  { to: "/timesheet", label: "Timesheet", icon: Clock },
-  { to: "/tracker", label: "Student Tracker", icon: LineChart },
-  { to: "/reports", label: "Reports", icon: FileBarChart2 },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/",        label: "Dashboard",      icon: LayoutDashboard },
+  { to: "/timesheet", label: "Timesheet",    icon: Clock },
+  { to: "/students",  label: "Students",     icon: Users },
+  { to: "/tracker",   label: "Student Tracker", icon: LineChart },
+  { to: "/reports",   label: "Reports",      icon: FileBarChart2 },
+  { to: "/settings",  label: "Settings",     icon: Settings },
 ];
 
 export function Sidebar() {
   const { pathname } = useLocation();
 
   return (
-    <aside className="bg-sidebar-gradient text-sidebar-foreground relative flex w-60 shrink-0 flex-col border-r border-sidebar-border">
-      {/* Logo */}
-      <div className="px-5 pt-6 pb-5">
-        <div className="flex items-center gap-3">
-          <div className="grid h-9 w-9 place-items-center rounded-lg bg-gold-gradient shadow-[0_4px_12px_rgba(212,160,48,0.35)]">
-            <GraduationCap className="h-4.5 w-4.5 text-primary" />
+    <aside className="relative flex w-48 shrink-0 flex-col border-r" style={{ backgroundColor: "#0a0f1e", borderColor: "rgba(255,255,255,0.05)" }}>
+
+      {/* Branding */}
+      <div className="px-4 pt-5 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="grid h-7 w-7 place-items-center rounded-md" style={{ background: "rgba(212,160,48,0.15)" }}>
+            <GraduationCap className="h-3.5 w-3.5" style={{ color: "#D4A030" }} strokeWidth={1.5} />
           </div>
-          <div className="leading-tight">
-            <div className="text-[15px] font-bold tracking-tight text-white">CT State</div>
-            <div className="text-[9px] font-semibold tracking-[0.18em] text-gold uppercase">WAVE Program</div>
+          <div className="leading-none">
+            <div style={{ fontSize: "13px", fontWeight: 500, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.01em" }}>
+              CT State
+            </div>
+            <div style={{ fontSize: "9px", fontWeight: 400, color: "rgba(212,160,48,0.65)", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: "2px" }}>
+              WAVE
+            </div>
           </div>
         </div>
-        <div className="mt-4 h-px w-full bg-sidebar-border" />
+        <div className="mt-4" style={{ height: "1px", background: "rgba(255,255,255,0.05)" }} />
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 pb-3">
-        <ul className="space-y-0.5">
+      <nav className="flex-1 px-2 pb-2">
+        <ul className="space-y-px">
           {nav.map((item) => {
             const active = pathname === item.to;
             const Icon = item.icon;
@@ -41,18 +46,24 @@ export function Sidebar() {
                 <Link
                   to={item.to}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                    "relative flex items-center gap-2.5 rounded-md px-3 py-[7px] transition-colors duration-150",
                     active
-                      ? "bg-white/[0.08] text-white"
-                      : "text-sidebar-foreground/60 hover:bg-white/[0.04] hover:text-white/80"
+                      ? "bg-white/[0.06] text-white"
+                      : "text-white/40 hover:bg-white/[0.03] hover:text-white/65"
                   )}
                 >
-                  {active && <span className="absolute left-3 h-5 w-0.5 rounded-r-full bg-gold" />}
+                  {active && (
+                    <span
+                      className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r"
+                      style={{ width: "2px", height: "14px", backgroundColor: "#D4A030" }}
+                    />
+                  )}
                   <Icon
-                    className={cn("h-4 w-4 shrink-0", active ? "text-gold" : "text-sidebar-foreground/50")}
-                    strokeWidth={active ? 2.2 : 1.8}
+                    className="h-3.5 w-3.5 shrink-0"
+                    style={{ color: active ? "#D4A030" : "rgba(255,255,255,0.28)" }}
+                    strokeWidth={1.5}
                   />
-                  <span className="text-[13px]">{item.label}</span>
+                  <span style={{ fontSize: "12px", fontWeight: 400 }}>{item.label}</span>
                 </Link>
               </li>
             );
@@ -61,14 +72,17 @@ export function Sidebar() {
       </nav>
 
       {/* User */}
-      <div className="border-t border-sidebar-border p-3">
-        <div className="flex items-center gap-2.5 px-2 py-2">
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold text-[11px] font-bold text-primary">
+      <div className="px-3 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="flex items-center gap-2">
+          <div
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-full"
+            style={{ background: "rgba(212,160,48,0.18)", fontSize: "10px", fontWeight: 500, color: "#D4A030" }}
+          >
             TM
           </div>
           <div className="min-w-0">
-            <div className="truncate text-[13px] font-semibold text-white">Tracy Mahar</div>
-            <div className="truncate text-[11px] text-sidebar-foreground/50">WAVE Coordinator</div>
+            <div className="truncate" style={{ fontSize: "12px", fontWeight: 400, color: "rgba(255,255,255,0.75)" }}>Tracy Mahar</div>
+            <div className="truncate" style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)" }}>WAVE Coordinator</div>
           </div>
         </div>
       </div>
