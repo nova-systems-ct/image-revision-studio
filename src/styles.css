@@ -161,7 +161,7 @@
 
 /* ─── Timesheet component styles ─────────────────────────── */
 .ts-page {
-  background-color: #FFE4EA;
+  background-color: #FDE8EE;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   color-adjust: exact;
@@ -171,10 +171,6 @@
   box-sizing: border-box;
   width: 100%;
   padding: 0;
-}
-
-.ts-content {
-  position: relative;
 }
 
 .ts-table {
@@ -191,10 +187,10 @@
 }
 
 .ts-table th {
-  background-color: #1B3A6B;
+  background-color: #000;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-  color: white;
+  color: #FDE8EE;
   font-weight: bold;
   text-align: center;
   font-size: 6.5pt;
@@ -202,15 +198,11 @@
 }
 
 .ts-subtotal td {
-  background-color: #d0dff0 !important;
+  background-color: #f5c0cf !important;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   font-size: 7pt;
   font-weight: bold;
-}
-
-.ts-week2 {
-  background-color: rgba(0, 0, 48, 0.02);
 }
 
 .ts-row {

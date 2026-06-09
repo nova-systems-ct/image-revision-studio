@@ -1,247 +1,222 @@
-import ctstateLogo from "../assets/ctstate-logo.png";
 import type { Student } from "../lib/students";
 import type { PayPeriod } from "../data/payPeriods";
 import { getPayPeriodDays, formatRangeFull } from "../data/payPeriods";
-
-const NAVY = "#1B3A6B";
-const BLUE_TINT = "#d0dff0";
 
 interface Props {
   student: Student;
   period: PayPeriod;
 }
 
-/* ── Shared style objects ── */
-const cell: React.CSSProperties = { border: "1px solid #000", padding: "2px 4px", verticalAlign: "middle" };
-const lbl: React.CSSProperties = { fontSize: "5.5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.06em", color: "#666", lineHeight: 1 };
-const val: React.CSSProperties = { fontSize: "8pt", fontWeight: "bold", lineHeight: 1.2, marginTop: "2px" };
-const blankLine: React.CSSProperties = { ...val, borderBottom: "1px solid #000", display: "block", minWidth: "60px" };
-const subCell: React.CSSProperties = { border: "1px solid #000", padding: "2px 4px", verticalAlign: "middle", backgroundColor: BLUE_TINT, WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" };
+const lbl: React.CSSProperties = {
+  fontSize: "5.5pt",
+  fontWeight: "bold",
+  textTransform: "uppercase",
+  letterSpacing: "0.06em",
+  color: "#666",
+  lineHeight: 1,
+  marginBottom: "2px",
+};
 
-function Val({ v }: { v: string }) {
-  return v ? <div style={val}>{v}</div> : <div style={blankLine}>&nbsp;</div>;
-}
-
-/* ── Single signature row ── */
-function SigRow({ title, showTotalHours }: { title: string; showTotalHours?: boolean }) {
-  const lineStyle: React.CSSProperties = { borderBottom: "1px solid #000", flex: 1 };
-  const lineLbl: React.CSSProperties = { fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", color: "#777", marginTop: "1px", whiteSpace: "nowrap" };
-  const fieldWrap: React.CSSProperties = { display: "flex", flexDirection: "column", flex: 1, minWidth: 0 };
-
-  return (
-    <div style={{ borderTop: "1px solid #bbb", padding: "3px 5px" }}>
-      <div style={{ fontSize: "6pt", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.08em", color: NAVY, marginBottom: "3px" }}>
-        {title}
-      </div>
-      <div style={{ display: "flex", gap: "10px", alignItems: "flex-end" }}>
-        <div style={fieldWrap}>
-          <div style={lineStyle}>&nbsp;</div>
-          <div style={lineLbl}>Name</div>
-        </div>
-        <div style={fieldWrap}>
-          <div style={lineStyle}>&nbsp;</div>
-          <div style={lineLbl}>Signature</div>
-        </div>
-        <div style={{ ...fieldWrap, maxWidth: "80px" }}>
-          <div style={lineStyle}>&nbsp;</div>
-          <div style={lineLbl}>Date</div>
-        </div>
-        {showTotalHours && (
-          <div style={{ ...fieldWrap, maxWidth: "100px" }}>
-            <div style={lineStyle}>&nbsp;</div>
-            <div style={lineLbl}>Total Hours</div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+const fieldVal: React.CSSProperties = {
+  borderBottom: "1px solid #000",
+  paddingBottom: "1px",
+  fontSize: "8pt",
+  fontWeight: "bold",
+  minHeight: "11pt",
+};
 
 export function Timesheet({ student, period }: Props) {
   const { week1, week2 } = getPayPeriodDays(period);
 
   return (
     <div className="ts-page">
-      <div className="ts-content">
 
-        {/* ── Header ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: `3px solid ${NAVY}`, paddingBottom: "4px", marginBottom: "3px" }}>
-          <img
-            src={ctstateLogo}
-            alt="CT State Community College"
-            style={{ height: "34px", width: "auto", flexShrink: 0 }}
-          />
-          <div style={{ flex: 1, textAlign: "center" }}>
-            <div style={{ fontSize: "10pt", fontWeight: "900", letterSpacing: "0.03em", color: NAVY, lineHeight: 1.2 }}>
-              NAUGATUCK VALLEY COMMUNITY COLLEGE
-            </div>
-            <div style={{ fontSize: "6.5pt", fontWeight: "700", letterSpacing: "0.07em", marginTop: "2px", color: "#222" }}>
-              FOR EMPLOYEES PAID WITH FUNDS FROM FEDERAL GRANTS
-            </div>
-          </div>
-          <div style={{ textAlign: "right", fontSize: "7pt", minWidth: "56px", lineHeight: 1.4, flexShrink: 0 }}>
-            <div style={{ fontWeight: "bold", fontSize: "8.5pt", color: NAVY }}>FY 2027</div>
-            <div style={{ color: "#444" }}>PP {period.id} / 26</div>
-          </div>
+      {/* ── Header: black bg, white text ── */}
+      <div style={{
+        backgroundColor: "#000",
+        WebkitPrintColorAdjust: "exact",
+        printColorAdjust: "exact",
+        color: "#fff",
+        textAlign: "center",
+        padding: "5px 8px",
+        marginBottom: "6px",
+      }}>
+        <div style={{ fontSize: "12pt", fontWeight: "900", letterSpacing: "0.02em", lineHeight: 1.2 }}>
+          CT STATE NAUGATUCK VALLEY COMMUNITY COLLEGE
         </div>
-
-        {/* ── Employee info ── */}
-        <table className="ts-table" style={{ marginBottom: "2px" }}>
-          <tbody>
-            <tr>
-              <td style={{ ...cell, width: "36%" }}><div style={lbl}>Employee Name</div><Val v={student.name} /></td>
-              <td style={{ ...cell, width: "36%" }}><div style={lbl}>Department / Program</div><Val v={student.department} /></td>
-              <td style={{ ...cell, width: "28%" }}><div style={lbl}>Work Location / School</div><Val v={student.workLocation} /></td>
-            </tr>
-            <tr>
-              <td style={cell} colSpan={3}><div style={lbl}>Pay Period</div><div style={val}>{formatRangeFull(period)}</div></td>
-            </tr>
-            <tr>
-              <td style={cell} colSpan={3}>
-                <span style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", marginRight: "8px", fontSize: "6pt" }}>
-                  Type of Employee:
-                </span>
-                <span style={{ marginRight: "2px", fontSize: "9pt" }}>☑</span>
-                <span style={{ fontWeight: "bold", marginRight: "14px", fontSize: "7.5pt" }}>Student</span>
-                <span style={{ marginRight: "2px", fontSize: "9pt" }}>☐</span>
-                <span style={{ marginRight: "14px", fontSize: "7.5pt" }}>Educational Assistant</span>
-                <span style={{ marginRight: "2px", fontSize: "9pt" }}>☐</span>
-                <span style={{ marginRight: "14px", fontSize: "7.5pt" }}>Full Time</span>
-                <span style={{ marginRight: "2px", fontSize: "9pt" }}>☐</span>
-                <span style={{ fontSize: "7.5pt" }}>Part Time</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* ── Time entry table ── */}
-        <table className="ts-table" style={{ marginBottom: "2px" }}>
-          <thead>
-            <tr>
-              <th style={{ width: "7%" }}>Date</th>
-              <th style={{ width: "7%" }}>Day</th>
-              <th style={{ width: "8%" }}>In</th>
-              <th style={{ width: "8%" }}>Out</th>
-              <th style={{ width: "7%" }}>Meal</th>
-              <th style={{ width: "8%" }}>In</th>
-              <th style={{ width: "8%" }}>Out</th>
-              <th style={{ width: "10%" }}>Total Hrs</th>
-              <th style={{ width: "37%" }}>Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            {week1.map((day, i) => (
-              <tr key={`w1-${i}`} className="ts-row">
-                <td style={{ ...cell, textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.formatted}</td>
-                <td style={{ ...cell, textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.dayName}</td>
-                <td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} />
-              </tr>
-            ))}
-            <tr className="ts-subtotal">
-              <td colSpan={7} style={{ ...subCell, textAlign: "right", paddingRight: "5px", fontSize: "6pt", letterSpacing: "0.05em" }}>
-                WEEK 1 SUB TOTAL:
-              </td>
-              <td style={subCell} />
-              <td style={subCell} />
-            </tr>
-            {week2.map((day, i) => (
-              <tr key={`w2-${i}`} className="ts-row ts-week2">
-                <td style={{ ...cell, textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.formatted}</td>
-                <td style={{ ...cell, textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.dayName}</td>
-                <td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} /><td style={cell} />
-              </tr>
-            ))}
-            <tr className="ts-subtotal">
-              <td colSpan={7} style={{ ...subCell, textAlign: "right", paddingRight: "5px", fontSize: "6pt", letterSpacing: "0.05em" }}>
-                WEEK 2 SUB TOTAL:
-              </td>
-              <td style={subCell} />
-              <td style={subCell} />
-            </tr>
-          </tbody>
-        </table>
-
-        {/* ── Activities row ── */}
-        <div style={{ border: "1px solid #000", padding: "3px 5px", marginBottom: "2px", fontSize: "7.5pt" }}>
-          <span style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.07em", fontSize: "5.5pt", marginRight: "12px" }}>
-            Activities:
-          </span>
-          <span style={{ marginRight: "16px" }}>
-            <span style={{ fontSize: "5.5pt", fontWeight: "bold", textTransform: "uppercase", color: "#555" }}>Account No.:</span>{" "}
-            <strong>HB 3500</strong>
-          </span>
-          <span style={{ marginRight: "16px" }}>
-            <span style={{ fontSize: "5.5pt", fontWeight: "bold", textTransform: "uppercase", color: "#555" }}>Grant Title:</span>{" "}
-            <strong>WIOA Out Of School</strong>
-          </span>
-          <span>
-            <span style={{ fontSize: "5.5pt", fontWeight: "bold", textTransform: "uppercase", color: "#555" }}>Percentage:</span>{" "}
-            <strong>100%</strong>
-          </span>
+        <div style={{ fontSize: "8pt", fontWeight: "400", marginTop: "2px" }}>
+          FOR EMPLOYEES PAID WITH FUNDS FROM FEDERAL GRANTS
         </div>
+      </div>
 
-        {/* ── Total hours for pay period ── */}
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "3px" }}>
-          <div style={{ border: `2px solid ${NAVY}`, padding: "3px 8px", display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "7pt", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.07em", color: NAVY }}>
-              Total Hours For Pay Period:
-            </span>
-            <div style={{ borderBottom: "1.5px solid #000", width: "72px" }}>&nbsp;</div>
+      {/* ── Row 1: Employee Name | Department | Pay Period ── */}
+      <div style={{ display: "flex", gap: "12px", marginBottom: "4px", paddingBottom: "4px", borderBottom: "1px solid #000" }}>
+        <div style={{ flex: 2 }}>
+          <div style={lbl}>Employee Name</div>
+          <div style={fieldVal}>{student.name}</div>
+        </div>
+        <div style={{ flex: 2 }}>
+          <div style={lbl}>Department:</div>
+          <div style={fieldVal}>{student.department}</div>
+        </div>
+        <div style={{ flex: 1.5 }}>
+          <div style={lbl}>Pay Period:</div>
+          <div style={fieldVal}>{formatRangeFull(period)}</div>
+        </div>
+      </div>
+
+      {/* ── Row 2: Type of Employee checkboxes + Employee ID ── */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "5px", paddingBottom: "5px", borderBottom: "2px solid #000" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "6pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Type of Employee:
+          </span>
+          <span style={{ fontSize: "9pt", lineHeight: 1 }}>■</span>
+          <span style={{ fontSize: "7.5pt", marginRight: "6px" }}>Student</span>
+          <span style={{ fontSize: "9pt", lineHeight: 1 }}>□</span>
+          <span style={{ fontSize: "7.5pt", marginRight: "6px" }}>Educational Assistant</span>
+          <span style={{ fontSize: "9pt", lineHeight: 1 }}>□</span>
+          <span style={{ fontSize: "7.5pt" }}>Full Time / Part Time</span>
+        </div>
+        <div style={{ minWidth: "130px" }}>
+          <div style={lbl}>Employee ID:</div>
+          <div style={fieldVal}>{student.studentId}</div>
+        </div>
+      </div>
+
+      {/* ── Time entry table ── */}
+      <table className="ts-table" style={{ marginBottom: "4px" }}>
+        <thead>
+          <tr>
+            <th style={{ width: "8%" }}>Date</th>
+            <th style={{ width: "8%" }}>Day</th>
+            <th style={{ width: "7%" }}>AM In</th>
+            <th style={{ width: "7%" }}>AM Out</th>
+            <th style={{ width: "6%" }}>Meal</th>
+            <th style={{ width: "7%" }}>PM In</th>
+            <th style={{ width: "7%" }}>PM Out</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          {week1.map((day, i) => (
+            <tr key={`w1-${i}`} className="ts-row">
+              <td style={{ textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.formatted}</td>
+              <td style={{ textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.dayName}</td>
+              <td /><td /><td /><td /><td /><td />
+            </tr>
+          ))}
+          <tr className="ts-subtotal">
+            <td colSpan={5} style={{ textAlign: "left", paddingLeft: "4px", fontSize: "6.5pt", letterSpacing: "0.05em" }}>
+              WEEK 1 — SUB TOTAL
+            </td>
+            <td colSpan={3} />
+          </tr>
+          {week2.map((day, i) => (
+            <tr key={`w2-${i}`} className="ts-row">
+              <td style={{ textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.formatted}</td>
+              <td style={{ textAlign: "center", fontWeight: "bold", fontSize: "7.5pt" }}>{day.dayName}</td>
+              <td /><td /><td /><td /><td /><td />
+            </tr>
+          ))}
+          <tr className="ts-subtotal">
+            <td colSpan={5} style={{ textAlign: "left", paddingLeft: "4px", fontSize: "6.5pt", letterSpacing: "0.05em" }}>
+              WEEK 2 — SUB TOTAL
+            </td>
+            <td colSpan={3} />
+          </tr>
+        </tbody>
+      </table>
+
+      {/* ── Grant section ── */}
+      <div style={{ border: "1px solid #000", marginBottom: "5px" }}>
+        <div style={{ display: "flex" }}>
+          <div style={{ flex: 1, borderRight: "1px solid #000", borderBottom: "1px solid #000", padding: "2px 5px" }}>
+            <div style={lbl}>Account No.</div>
+            <div style={{ fontSize: "8pt", fontWeight: "bold" }}>HB 3500</div>
+          </div>
+          <div style={{ flex: 3, borderRight: "1px solid #000", borderBottom: "1px solid #000", padding: "2px 5px" }}>
+            <div style={lbl}>Grant Title and/or Department: *</div>
+            <div style={{ fontSize: "8pt", fontWeight: "bold" }}>WIOA Out Of School</div>
+          </div>
+          <div style={{ flex: 1, borderBottom: "1px solid #000", padding: "2px 5px" }}>
+            <div style={lbl}>Percentage of Effort: **</div>
+            <div style={{ fontSize: "8pt", fontWeight: "bold" }}>100%</div>
           </div>
         </div>
+        <div style={{ display: "flex", alignItems: "center", padding: "3px 5px", gap: "12px" }}>
+          <div style={{ flex: 1, fontSize: "5pt", fontStyle: "italic", color: "#555", lineHeight: 1.3 }}>
+            *Effort devoted to more than one project must be broken out individually.&nbsp;
+            ** Percentages should add up to 100%.
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: "7pt", fontWeight: "bold" }}>Total Hours:</span>
+            <div style={{ borderBottom: "1px solid #000", width: "90px" }}>&nbsp;</div>
+          </div>
+        </div>
+      </div>
 
-        {/* ── Certification text ── */}
-        <div style={{ border: "1px solid #000", borderBottom: "none", padding: "4px 5px 2px" }}>
-          <p style={{ fontSize: "6pt", fontStyle: "italic", lineHeight: 1.35, margin: 0 }}>
-            I certify that the above time record is correct and that I worked the hours stated herein in the performance
-            of my official duties. I further certify that I did not receive payment from any other source for these hours.
+      {/* ── 4 Signature lines ── */}
+      {(["Employee Signature", "Supervisor Signature", "Educational Assistant Signature", "WAVE Coordinator Signature"] as const).map((label) => (
+        <div key={label} style={{ display: "flex", alignItems: "flex-end", gap: "6px", marginBottom: "9px" }}>
+          <span style={{ fontSize: "6.5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+            {label}
+          </span>
+          <div style={{ flex: 1, borderBottom: "1px solid #000" }}>&nbsp;</div>
+          <span style={{ fontSize: "6.5pt", fontWeight: "bold", textTransform: "uppercase", whiteSpace: "nowrap" }}>Date</span>
+          <div style={{ width: "80px", borderBottom: "1px solid #000" }}>&nbsp;</div>
+        </div>
+      ))}
+
+      {/* ── Bottom: certify text left + FOR PAYROLL OFFICE ONLY right ── */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+        <div style={{ flex: 1 }}>
+          <p style={{ fontSize: "5.5pt", fontStyle: "italic", lineHeight: 1.4, margin: 0 }}>
+            I certify under penalty of law that this declaration of time and effort represents a reasonable
+            estimate of the effort expended by me during the period covered by this report.
           </p>
         </div>
-
-        {/* ── Signature blocks — stacked vertically ── */}
-        <div style={{ border: "1px solid #000", borderTop: "none", marginBottom: "3px" }}>
-          <SigRow title="Employee" />
-          <SigRow title="Supervisor" />
-          <SigRow title="Educational Assistant" />
-          <SigRow title="WAVE Coordinator" showTotalHours />
-        </div>
-
-        {/* ── FOR PAYROLL OFFICE ONLY ── */}
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <div style={{ border: `2px solid ${NAVY}`, minWidth: "220px" }}>
-            <div style={{
-              backgroundColor: NAVY,
-              WebkitPrintColorAdjust: "exact",
-              printColorAdjust: "exact",
-              color: "white",
-              fontSize: "6pt",
-              fontWeight: "900",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              textAlign: "center",
-              padding: "2px 6px",
-            }}>
-              For Payroll Office Only
+        <div style={{ border: "1px solid #000", minWidth: "195px" }}>
+          <div style={{
+            backgroundColor: "#000",
+            WebkitPrintColorAdjust: "exact",
+            printColorAdjust: "exact",
+            color: "#fff",
+            textAlign: "center",
+            padding: "2px 5px",
+            fontSize: "6pt",
+            fontWeight: "900",
+            textTransform: "uppercase",
+            letterSpacing: "0.07em",
+          }}>
+            For Payroll Office Only
+          </div>
+          <div style={{ padding: "3px 6px 5px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "4px" }}>
+              <span style={{ fontSize: "6pt" }}>Hours</span>
+              <div style={{ width: "26px", borderBottom: "1px solid #000" }}>&nbsp;</div>
+              <span style={{ fontSize: "6pt" }}>@</span>
+              <div style={{ width: "26px", borderBottom: "1px solid #000" }}>&nbsp;</div>
+              <span style={{ fontSize: "6pt" }}>= $</span>
+              <div style={{ flex: 1, borderBottom: "1px solid #000" }}>&nbsp;</div>
             </div>
-            <div style={{ display: "flex", gap: "8px", padding: "3px 6px 4px" }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ borderBottom: "1px solid #000", marginBottom: "1px" }}>&nbsp;</div>
-                <div style={{ fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", color: "#777" }}>Date Received</div>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ borderBottom: "1px solid #000", marginBottom: "1px" }}>&nbsp;</div>
-                <div style={{ fontSize: "5pt", fontWeight: "bold", textTransform: "uppercase", color: "#777" }}>Processed By</div>
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "4px" }}>
+              <span style={{ fontSize: "6pt", whiteSpace: "nowrap" }}>Checked by</span>
+              <div style={{ flex: 1, borderBottom: "1px solid #000" }}>&nbsp;</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+              <span style={{ fontSize: "6pt" }}>Date</span>
+              <div style={{ flex: 1, borderBottom: "1px solid #000" }}>&nbsp;</div>
             </div>
           </div>
         </div>
-
-        {/* ── Footer ── */}
-        <div style={{ textAlign: "right", fontSize: "4.5pt", color: "#ccc", marginTop: "2px" }}>
-          Nova Systems
-        </div>
-
       </div>
+
+      {/* ── Nova Systems footer ── */}
+      <div style={{ textAlign: "right", fontSize: "4.5pt", color: "#ccc", marginTop: "2px" }}>
+        Nova Systems
+      </div>
+
     </div>
   );
 }
